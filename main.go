@@ -5,7 +5,6 @@ import (
 	"example-rest-api/controller"
 	"example-rest-api/exception"
 	"example-rest-api/helper"
-	"example-rest-api/middleware"
 	"example-rest-api/repository"
 	"example-rest-api/service"
 	"github.com/go-playground/validator/v10"
@@ -16,7 +15,7 @@ import (
 func main() {
 	db := app.NewDB()
 	validate := validator.New()
-	userRepository := repository.NewUserRepository()
+	userRepository := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepository, db, validate)
 	userController := controller.NewUserController(userService)
 	router := httprouter.New()
@@ -26,7 +25,7 @@ func main() {
 
 	server := http.Server{
 		Addr:    "localhost:3000",
-		Handler: middleware.NewAuthMiddleware(router),
+		Handler: router,
 	}
 
 	err := server.ListenAndServe()

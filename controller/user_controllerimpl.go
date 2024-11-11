@@ -6,6 +6,7 @@ import (
 	"example-rest-api/model/response"
 	"example-rest-api/service"
 	"github.com/julienschmidt/httprouter"
+	"log"
 	"net/http"
 )
 
@@ -21,9 +22,10 @@ func NewUserController(userService service.UserService) UserController {
 
 func (userControllerImpl *UserControllerImpl) Save(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	userRequest := request2.UserRequest{}
+	log.Println("Check request", request)
 	helper.ReadFromRequestBody(request, &userRequest)
 
-	userResponse := userControllerImpl.userService.Save(request.Context(), userRequest)
+	userResponse := userControllerImpl.userService.Save(userRequest)
 	webResponse := response.BaseResponse{
 		Code:   200,
 		Status: "OK",

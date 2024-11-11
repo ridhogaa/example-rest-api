@@ -1,16 +1,17 @@
 package app
 
 import (
-	"database/sql"
 	"example-rest-api/helper"
+	"example-rest-api/model/domain"
 	"fmt"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"os"
-	"time"
 )
 
-func NewDB() *sql.DB {
+func NewDB() *gorm.DB {
 	err := godotenv.Load()
 	helper.PanicIfError(err)
 
@@ -22,13 +23,10 @@ func NewDB() *sql.DB {
 
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbname)
 
-	db, errs := sql.Open("postgres", connStr)
-	helper.PanicIfError(errs)
+	db, errs := gorm.Open(postgres.Open(connStr), &gorm.Config{})
 
-	db.SetMaxIdleConns(5)
-	db.SetMaxOpenConns(20)
-	db.SetConnMaxLifetime(60 * time.Minute)
-	db.SetConnMaxIdleTime(10 * time.Minute)
+	helper.PanicIfError(db.AutoMigrate(&domain.User{}))
+	helper.PanicIfError(errs)
 
 	return db
 }

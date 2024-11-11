@@ -1,26 +1,22 @@
 package repository
 
 import (
-	"context"
-	"database/sql"
 	"example-rest-api/helper"
 	"example-rest-api/model/domain"
+	"gorm.io/gorm"
 )
 
-type UserRepositoryImpl struct{}
-
-func NewUserRepository() UserRepository {
-	return &UserRepositoryImpl{}
+type UserRepositoryImpl struct {
+	db *gorm.DB
 }
 
-func (userRepository *UserRepositoryImpl) Save(ctx context.Context, user domain.User, tx *sql.Tx) domain.User {
-	SQL := "insert into users(name) values (?)"
-	result, err := tx.ExecContext(ctx, SQL, user.Name)
-	helper.PanicIfError(err)
+func NewUserRepository(db *gorm.DB) UserRepository {
+	return &UserRepositoryImpl{db: db}
+}
 
-	id, err := result.LastInsertId()
-	helper.PanicIfError(err)
-
-	user.Id = int(id)
+func (userRepository *UserRepositoryImpl) Save(user domain.User) domain.User {
+	if err := userRepository.db.Save(&user); err != nil {
+		helper.PanicIfError(err.Error)
+	}
 	return user
 }
