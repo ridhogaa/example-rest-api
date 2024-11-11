@@ -11,7 +11,6 @@ import (
 )
 
 func NewDB() *sql.DB {
-	// Load environment variables from .env file
 	err := godotenv.Load()
 	helper.PanicIfError(err)
 
@@ -21,10 +20,8 @@ func NewDB() *sql.DB {
 	dbname := os.Getenv("DB_NAME")
 	password := os.Getenv("PASSWORD")
 
-	// Format connection string
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbname)
 
-	// Connect to the database
 	db, errs := sql.Open("postgres", connStr)
 	helper.PanicIfError(errs)
 
