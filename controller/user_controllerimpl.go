@@ -20,16 +20,27 @@ func NewUserController(userService service.UserService) UserController {
 	}
 }
 
-func (userControllerImpl *UserControllerImpl) Save(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+func (u *UserControllerImpl) Save(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	userRequest := request2.UserRequest{}
 	log.Println("Check request", request)
 	helper.ReadFromRequestBody(request, &userRequest)
 
-	userResponse := userControllerImpl.userService.Save(userRequest)
+	userResponse := u.userService.Save(userRequest)
 	webResponse := response.BaseResponse{
 		Code:   200,
 		Status: "OK",
 		Data:   userResponse,
+	}
+
+	helper.WriteToResponseBody(writer, webResponse)
+}
+
+func (u *UserControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	usersResponse := u.userService.FindAll()
+	webResponse := response.BaseResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   usersResponse,
 	}
 
 	helper.WriteToResponseBody(writer, webResponse)

@@ -20,3 +20,12 @@ func (userRepository *UserRepositoryImpl) Save(user domain.User) domain.User {
 	}
 	return user
 }
+
+func (userRepository *UserRepositoryImpl) FindAll() []domain.User {
+	var listUser []domain.User
+	result := userRepository.db.Find(&listUser)
+	if result != nil {
+		helper.PanicIfError(result.Error)
+	}
+	return listUser
+}

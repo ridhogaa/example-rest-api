@@ -7,21 +7,20 @@ import (
 	"example-rest-api/helper"
 	"example-rest-api/repository"
 	"example-rest-api/service"
-	"github.com/go-playground/validator/v10"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
 
 func main() {
 	db := app.NewDB()
-	validate := validator.New()
 	userRepository := repository.NewUserRepository(db)
-	userService := service.NewUserService(userRepository, db, validate)
+	userService := service.NewUserService(userRepository, db)
 	userController := controller.NewUserController(userService)
 	router := httprouter.New()
 	router.PanicHandler = exception.ErrorHandler
 
 	router.POST("/api/v1/users", userController.Save)
+	router.GET("/api/v1/users", userController.FindAll)
 
 	server := http.Server{
 		Addr:    "localhost:3000",

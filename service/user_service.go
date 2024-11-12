@@ -7,4 +7,5 @@ import (
 
 type UserService interface {
 	Save(request request.UserRequest) domain.User
+	FindAll() []domain.User
 }

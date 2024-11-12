@@ -6,4 +6,5 @@ import (
 
 type UserRepository interface {
 	Save(user domain.User) domain.User
+	FindAll() []domain.User
 }
